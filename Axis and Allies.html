@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html> 
+  <head>
+    <title>Processing.JS inside Webpages: Template</title> 
+  </head>
+  <body>
+	<!--This draws the canvas on the webpage -->
+    <canvas id="mycanvas"></canvas> 
+  </body>
+ 
+  <!-- Include the processing.js library -->
+  <!-- See https://khanacademy.zendesk.com/hc/en-us/articles/202260404-What-parts-of-ProcessingJS-does-Khan-Academy-support- for differences -->
+  <script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script> 
+  <script>
+  var programCode = function(processingInstance) {
+    with (processingInstance) {
+      size(600, 600); 
+      frameRate(100);
+        
+      // Paste code from Khan Academy here:
+//Axis and Allies Counter Improved 2
+//Still in trial however I think I have fixed all the bugs and am almost ready to move to the actually thing.
+//Fixed it to where you can take back your own territory and that you only can gain IPC points from a territory that you do not have includeing if your own territory was taken over.
+
+//Going to make it on 600 by 600 px so if you can't see everything go to settings right under the About and Documentation and change your screen to 600 px by 600 px.
+
+//If the text comes out funny or doesn't come out at all just press restart, I don't know why it does this and I don't think I can fix it.
+
+//This was my practice base program. I am going to start working on the main program.
+
+//Starting on my newext version: https://www.khanacademy.org/computer-programming/axis-and-allies-ipc-counter-best-version-1/5308779411456000
+var USIPCs = 10;
+var GermanIPCs = 8;
+var turn = 1;
+var GermanIPCspurchase = 8;
+var USIPCspurchase = 10;
+
+
+var USButton1Occupent = "US";
+var USButton2Occupent = "US";
+
+var GermanButton1Occupent = "GERMANY";
+var GermanButton2Occupent = "GERMANY";
+
+var GermanInfantry = 0;
+var GermanTanks = 0;
+
+var USInfantry = 0;
+var USTanks = 0;
+
+
+var IPCcounter = function () {
+    textSize (17);
+    text ("US IPCs:", 10, 475);
+    text (USIPCs, 20, 500);
+    text ("German IPCs:", 100, 475); 
+    text (GermanIPCs, 140, 500);
+};
+
+var USturn = function () {
+    textSize(30);
+    text ("America Turn", 200, 550);  
+};
+var GermanTurn = function() {
+    textSize(30);
+    text ("German Turn", 200, 550); 
+};
+var NextButton = function () {
+    fill (255, 238, 0);
+    rect (0, 550, 100, 45);
+    fill (3, 3, 3);
+    textSize (30);
+    text ("NEXT", 10, 556);
+};  
+var drawButtonUS = function(btn) {
+    fill (0, 4, 255);
+    strokeWeight (4);
+    rect(btn.x, btn.y, btn.width, btn.height, 5);
+    
+    fill(0, 0, 0);
+    textSize(10);
+    textAlign(LEFT, TOP);
+    text(btn.title, btn.x+10, btn.y+btn.height/4);
+    var ipc_value = btn.ipc;
+    text("IPC Value = " + btn.ipc, btn.x + 10, btn.y + btn.height / 2);
+
+};
+var drawButtonGerman = function(btn) {
+    fill (119, 119, 128);
+    rect(btn.x, btn.y, btn.width, btn.height, 5);
+    fill(0, 0, 0);
+    textSize(10);
+    textAlign(LEFT, TOP);
+    text(btn.title, btn.x+10, btn.y+btn.height/4);
+    var ipc_value = btn.ipc;
+    text("IPC Value = " + btn.ipc, btn.x + 10, btn.y + btn.height / 2);
+};
+
+var USButton1 = {
+
+    x : 20,
+    y: 0, 
+    width: 80,
+    height: 50,
+    title: "U.S. B1",
+    ipc: 2,
+
+
+    
+};
+var USButton2 = {
+
+    x : 0,
+    y: 81, 
+    width: 80,
+    height: 50,
+    title: "U.S. B2",
+    ipc: 1
+};
+var USButton3 = {
+    x: 50,
+    y: 150,
+    width: 90, 
+    height: 40,
+    title: "U.S. B2",
+    ipc: 1
+};
+    
+var GermanButton1 = {
+    x : 243,
+    y: 0,
+    width: 80,
+    height: 50,
+    title: "GERMAN B1",
+    ipc: 1
+};
+var GermanButton2 = {
+    x : 245,
+    y: 80,
+    width: 80,
+    height: 50,
+    title: "GERMAN B2",
+    ipc: 2
+};
+var mouseIsInside = function(btn) {
+    return (mouseX >= btn.x &&
+            mouseX <= (btn.x+btn.width) &&
+            mouseY >= btn.y && 
+            mouseY <= (btn.y+btn.height));
+};
+var drawLandUnitButton = function (btn) {
+    fill (170, 255, 0);
+    strokeWeight (4);
+    rect(btn.x, btn.y, btn.width, btn.height, 5);
+    fill(0, 0, 0);
+    textSize(25);
+    textAlign(LEFT, TOP);
+    text(btn.title, btn.x+10, btn.y+btn.height/4);
+};
+
+var infantry = {
+    
+    x: 60,
+    y: 120,
+    width: 200,
+    height: 75,
+    title: "Infantry: 1 IPC"
+};
+var tank = {
+    x: 60,
+    y: 210,
+    width: 200,
+    height: 75,
+    title: "Tank: 3 IPC"
+};
+var Germanypurchase = function () {
+
+    background (255,255,255);
+    textSize (30);
+    text ("GERMANY PURCHASE", 150, 0);
+    textSize (20);
+    text ("Amount of IPCs Available: " + GermanIPCspurchase, 200, 40);
+    line (300, 75, 300, 500);
+    line (50, 110, 550, 110);
+    text ("Unit: ", 120, 75);
+    text ("Quantity: ", 320, 75);
+    drawLandUnitButton (infantry);
+    drawLandUnitButton (tank);
+    textSize (40);
+    text (GermanInfantry, 350, 130);
+    text (GermanTanks, 350, 220);
+};
+
+var USpurchase = function () {
+    background (255,255,255);
+    textSize (30);
+    text ("US PURCHASE", 190, 0);
+    textSize (20);
+    text ("Amount of IPCs Available: " + USIPCspurchase,180, 40);
+    line (300, 75, 300, 500);
+    line (50, 110, 550, 110);
+    text ("Unit: ", 120, 75);
+    text ("Quantity: ", 320, 75);
+    drawLandUnitButton (infantry);
+    drawLandUnitButton (tank);
+    textSize (40);
+    text (USInfantry, 350, 130);
+    text (USTanks, 350, 220);
+};
+
+mouseClicked = function () {
+
+
+    
+    //NEXT Button control
+    if (mouseX < 150 && mouseY > 550) {
+        background (255, 255, 255);
+        turn += 1;
+        
+        if (turn >= 5) {
+            turn = 1;
+        }   
+        if (turn === 1) {
+            USIPCspurchase += USIPCs;    
+        }
+        
+        if (turn === 3){
+            GermanIPCspurchase += GermanIPCs;
+        }
+        
+    }
+
+    //Tells if it is German's turn do whatever.
+    if (turn === 2) {
+        background (255, 255, 255);
+        GermanTurn ();
+        
+        //Troublesome Code but I figured it out!
+        if (mouseIsInside (USButton1) && USButton1Occupent !== "GERMANY"){ 
+            
+            if (USButton1Occupent === "US") {
+                USIPCs -= 2;
+                GermanIPCs += 2;
+                USButton1Occupent = "GERMANY";
+            }
+
+
+        }
+        
+        if (mouseIsInside (USButton2) && USButton2Occupent !== "GERMANY") {
+            if (USButton2Occupent === "US") {
+                USIPCs -= 1;
+                GermanIPCs += 1;
+                USButton2Occupent = "GERMANY";
+                
+            }
+          
+        }
+        if (mouseIsInside (GermanButton1) && GermanButton1Occupent !== "GERMANY") {
+            if (GermanButton1Occupent === "US") {
+                USIPCs -= 1;
+                GermanIPCs += 1;
+                GermanButton1Occupent = "GERMANY";
+            }
+
+        }
+        if (mouseIsInside (GermanButton2) && GermanButton2Occupent !== "GERMANY") {
+            if (GermanButton2Occupent === "US") {
+                USIPCs -= 2;
+                GermanIPCs += 2;
+                GermanButton2Occupent = "GERMANY";
+            }
+        }
+        
+    
+    }
+    if (turn === 4) {
+        background (255,255,255);
+        USturn();
+        
+        if (mouseIsInside (GermanButton1) && GermanButton1Occupent !== "US") {
+            if (GermanButton1Occupent === "GERMANY") {
+                GermanIPCs -=1;
+                USIPCs += 1;
+                GermanButton1Occupent = "US";
+            }
+
+        }
+        if (mouseIsInside (GermanButton2) && GermanButton2Occupent !== "US") {
+            if (GermanButton2Occupent === "GERMANY"){
+                GermanIPCs -= 2;
+                USIPCs += 2;
+                GermanButton2Occupent = "US";
+            }
+        }
+        if (mouseIsInside (USButton1) && USButton1Occupent !== "US") {
+            if (USButton1Occupent === "GERMANY") {
+                GermanIPCs -= 2;
+                USIPCs += 2;
+                USButton1Occupent = "US";
+            }
+        }
+        if (mouseIsInside (USButton2) && USButton2Occupent !== "US") {
+            if (USButton2Occupent === "GERMANY") {
+                GermanIPCs -= 1;
+                USIPCs += 1;
+                USButton2Occupent = "US";
+            }
+        }
+    }
+
+    if (turn === 1) {
+        
+
+        if (mouseIsInside (infantry)) {
+            if ((GermanIPCspurchase - 1) >= 0) {
+                GermanIPCspurchase -=1;
+                GermanInfantry += 1;
+            }
+        }
+        if (mouseIsInside (tank)) {
+            if ((GermanIPCspurchase -3) >= 0) {
+                GermanIPCspurchase -= 3;
+                GermanTanks += 1;
+            }
+        }
+        Germanypurchase();
+
+
+        if (GermanIPCspurchase < 0) {
+            text ("You are in debt", 200, 550);
+        }
+
+    }
+    if (turn === 3) {
+        if (mouseIsInside (infantry)) {
+            if ((USIPCspurchase -1) >= 0) {
+                USIPCspurchase -= 1;  
+                USInfantry += 1;
+            }
+        }
+        if (mouseIsInside (tank)) {
+            if ((USIPCspurchase -1) >= 0) {
+                USIPCspurchase -=3;
+                USTanks +=1;
+            }
+        }
+        USpurchase();
+    }
+    if (turn === 2 || turn === 4) {
+        GermanInfantry = 0;
+        GermanTanks = 0;
+        USInfantry = 0;
+        USTanks = 0;
+drawButtonUS(USButton1);
+drawButtonUS (USButton2);
+drawButtonUS (USButton3);
+drawButtonGerman (GermanButton1);
+drawButtonGerman (GermanButton2);
+
+
+IPCcounter();
+}
+NextButton();
+
+};
+
+drawButtonUS(USButton1);
+drawButtonUS (USButton2);
+
+drawButtonGerman (GermanButton1);
+drawButtonGerman (GermanButton2);
+IPCcounter();
+
+Germanypurchase();
+
+NextButton();
+    }};
+
+  // Get the canvas that ProcessingJS will use
+  var canvas = document.getElementById("mycanvas"); 
+  // Pass the function to ProcessingJS constructor
+  var processingInstance = new Processing(canvas, programCode); 
+  </script>
+</html>
