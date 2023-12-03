@@ -81,25 +81,39 @@ var NextButton = function () {
     text ("NEXT", 10, 556);
 };  
 var drawButtonUS = function(btn) {
-    fill (0, 4, 255);
-    strokeWeight (4);
+    if (btn.title === "U.S. B1" && USButton1Occupent === "GERMANY") {
+        fill(169, 169, 169); // Grey color for occupied by Germany
+    } else if (btn.title === "U.S. B2" && USButton2Occupent === "GERMANY") {
+        fill(169, 169, 169); // Grey color for occupied by Germany
+    } else {
+        fill(0, 4, 255); // Blue color for US
+    }
+    
+    strokeWeight(4);
     rect(btn.x, btn.y, btn.width, btn.height, 5);
     
     fill(0, 0, 0);
     textSize(10);
     textAlign(LEFT, TOP);
-    text(btn.title, btn.x+10, btn.y+btn.height/4);
+    text(btn.title, btn.x + 10, btn.y + btn.height / 4);
     var ipc_value = btn.ipc;
     text("IPC Value = " + btn.ipc, btn.x + 10, btn.y + btn.height / 2);
-
 };
+
 var drawButtonGerman = function(btn) {
-    fill (119, 119, 128);
+    if (btn.title === "GERMAN B1" && GermanButton1Occupent === "US") {
+        fill(0, 4, 255); // Blue color for occupied by US
+    } else if (btn.title === "GERMAN B2" && GermanButton2Occupent === "US") {
+        fill(0, 4, 255); // Blue color for occupied by US
+    } else {
+        fill(119, 119, 128); // Grey color for Germany
+    }
+    
     rect(btn.x, btn.y, btn.width, btn.height, 5);
     fill(0, 0, 0);
     textSize(10);
     textAlign(LEFT, TOP);
-    text(btn.title, btn.x+10, btn.y+btn.height/4);
+    text(btn.title, btn.x + 10, btn.y + btn.height / 4);
     var ipc_value = btn.ipc;
     text("IPC Value = " + btn.ipc, btn.x + 10, btn.y + btn.height / 2);
 };
