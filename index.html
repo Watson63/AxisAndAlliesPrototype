@@ -36,6 +36,7 @@
 //This was my practice base program. I am going to start working on the main program.
 
 //Starting on my newext version: https://www.khanacademy.org/computer-programming/axis-and-allies-ipc-counter-best-version-1/5308779411456000
+var gameStateHistory = [];
 var USIPCs = 10;
 var GermanIPCs = 8;
 var turn = 1;
@@ -124,14 +125,7 @@ var USButton2 = {
     title: "U.S. B2",
     ipc: 1
 };
-var USButton3 = {
-    x: 50,
-    y: 150,
-    width: 90, 
-    height: 40,
-    title: "U.S. B2",
-    ipc: 1
-};
+
     
 var GermanButton1 = {
     x : 243,
@@ -215,11 +209,61 @@ var USpurchase = function () {
     text (USTanks, 350, 220);
 };
 
-mouseClicked = function () {
+// Add a new undo button
+var UndoButton = function () {
+    fill (255, 0, 0);
+    rect (495, 550, 100, 45);
+    fill(0,0,0);
+    textSize (30);
+    text ("UNDO", 505, 555);
+};
+var undoClick = function () {
+    if (gameStateHistory.length > 0) {
+        var previousState = gameStateHistory.pop();
 
+        // Restore the game state
+        USIPCs = previousState.USIPCs;
+        GermanIPCs = previousState.GermanIPCs;
+        turn = previousState.turn;
+        GermanIPCspurchase = previousState.GermanIPCspurchase;
+        USIPCspurchase = previousState.USIPCspurchase;
+        USButton1Occupent = previousState.USButton1Occupent;
+        USButton2Occupent = previousState.USButton2Occupent;
+        GermanButton1Occupent = previousState.GermanButton1Occupent;
+        GermanButton2Occupent = previousState.GermanButton2Occupent;
+        GermanInfantry = previousState.GermanInfantry;
+        GermanTanks = previousState.GermanTanks;
+        USInfantry = previousState.USInfantry;
+        USTanks = previousState.USTanks;
+    }
+};
 
+draw = function() {
     
-    //NEXT Button control
+};
+mouseClicked = function () {
+    if (mouseX > 495 && mouseX < 595 && mouseY > 550 && mouseY < 595) {
+        undoClick();
+    }
+    else {
+
+        var currentState = {
+        USIPCs: USIPCs,
+        GermanIPCs: GermanIPCs,
+        turn: turn,
+        GermanIPCspurchase: GermanIPCspurchase,
+        USIPCspurchase: USIPCspurchase,
+        USButton1Occupent: USButton1Occupent,
+        USButton2Occupent: USButton2Occupent,
+        GermanButton1Occupent: GermanButton1Occupent,
+        GermanButton2Occupent: GermanButton2Occupent,
+        GermanInfantry: GermanInfantry,
+        GermanTanks: GermanTanks,
+        USInfantry: USInfantry,
+        USTanks: USTanks
+        };
+        gameStateHistory.push(currentState);
+}    //NEXT Button control
     if (mouseX < 150 && mouseY > 550) {
         background (255, 255, 255);
         turn += 1;
@@ -236,6 +280,7 @@ mouseClicked = function () {
         }
         
     }
+    
 
     //Tells if it is German's turn do whatever.
     if (turn === 2) {
@@ -361,7 +406,7 @@ mouseClicked = function () {
         USTanks = 0;
 drawButtonUS(USButton1);
 drawButtonUS (USButton2);
-drawButtonUS (USButton3);
+
 drawButtonGerman (GermanButton1);
 drawButtonGerman (GermanButton2);
 
@@ -369,6 +414,7 @@ drawButtonGerman (GermanButton2);
 IPCcounter();
 }
 NextButton();
+UndoButton();
 
 };
 
@@ -382,6 +428,8 @@ IPCcounter();
 Germanypurchase();
 
 NextButton();
+UndoButton();
+
     }};
 
   // Get the canvas that ProcessingJS will use
